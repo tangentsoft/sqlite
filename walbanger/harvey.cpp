@@ -3,7 +3,8 @@
 
  Created and © 2022.09.25 by Warren Young
 
- Licensed under https://opensource.org/licenses/BSD-2-Clause
+ Licensed under the 2-clause BSD license in ../LICENSE.md.  Generic
+ version at https://opensource.org/licenses/BSD-2-Clause
 ***********************************************************************/
 
 #include <sqlite3.h>
