@@ -1,5 +1,5 @@
 /***********************************************************************
- harvey.cpp, the WAL-banger.
+ harvey.cpp, the WAL-banger.  See usage() below for details.
 
  Created and © 2022.09.25 by Warren Young
 
@@ -10,6 +10,7 @@
 #include <unistd.h>
 #include <iostream>
 #include <sstream>
+#include <signal.h>
 #include <stdlib.h>
 
 using namespace std;
@@ -21,24 +22,28 @@ using namespace std;
 // each type of statement should run, on average.  Adjust to suit.
 #if 1
     // Read-heavy "application" type mix
-    static const auto selects = 900;
-    static const auto inserts = 10;
-    static const auto updates = 10;
-    static const auto deletes = 1;
+    static const auto select_proportion = 900;
+    static const auto insert_proportion = 10;
+    static const auto update_proportion = 10;
+    static const auto delete_proportion = 1;
 #else
     // Flat mix, for testing SQL generator code coverage
-    static const auto selects = 1;
-    static const auto inserts = 1;
-    static const auto updates = 1;
-    static const auto deletes = 1;
+    static const auto select_proportion = 1;
+    static const auto insert_proportion = 1;
+    static const auto update_proportion = 1;
+    static const auto delete_proportion = 1;
 #endif
 
 // Derivatives of above to scale them into the [0.0 - 1.0) range.
-static const auto types = selects + inserts + updates + deletes + 0.0;
-static const auto select_factor = selects / types;
-static const auto insert_factor = inserts / types;
-static const auto update_factor = updates / types;
-static const auto delete_factor = deletes / types;
+static const double types =
+        select_proportion +
+        insert_proportion +
+        update_proportion +
+        delete_proportion;
+static const auto select_factor = select_proportion / types;
+static const auto insert_factor = insert_proportion / types;
+static const auto update_factor = update_proportion / types;
+static const auto delete_factor = delete_proportion / types;
 
 // In -p mode, how many statements to skip printing a dot for.
 #define PROGDOTSKIP 1000
@@ -47,6 +52,7 @@ static const auto delete_factor = deletes / types;
 //// GLOBALS ///////////////////////////////////////////////////////////
 
 static sqlite3* db;
+static size_t records, deletes, inserts, updates, selects;
 
 
 //// usage /////////////////////////////////////////////////////////////
@@ -58,16 +64,15 @@ usage(const char* error = 0)
     cerr << R"(
 Usage: walpounder [-prv] dbname
 
-    Creates or opens the named SQLite database, then begins updating it
-    according to patterns set at compile time at the top of )" __FILE__ R"(.
+    Creates or opens the named SQLite database in WAL mode, then begins
+    updating it according to patterns set at compile time at the top of
+    )" __FILE__ R"(.
 
 Options:
 
-    -p  print a progress dot every )" << PROGDOTSKIP << R"( records.
-
-    -r  reset the DB first, deleting all prior data.
-
-    -v  give verbose output
+    -p  print a progress dot every )" << PROGDOTSKIP << R"( records
+    -r  reset the DB first, deleting all prior data
+    -v  give verbose output on each SELECT
 )" << endl;
 
     exit(1);
@@ -86,6 +91,27 @@ static void
 usage(const char* error, int rc)
 {
     usage(error, sqlite3_errmsg(db));
+}
+
+
+//// cleanup ///////////////////////////////////////////////////////////
+// Program termination handlers.
+
+static void
+cleanup(void)
+{
+    if (db) sqlite3_close(db);
+    cout << "\nHit the DB " << records << " times:\n";
+    cout << "  SELECT: " << selects << "\n";
+    cout << "  INSERT: " << inserts << "\n";
+    cout << "  UPDATE: " << updates << "\n";
+    cout << "  DELETE: " << deletes << "\n";
+}
+
+static void
+die(int sig)
+{
+    exit(100 + sig);
 }
 
 
@@ -110,7 +136,7 @@ main(int argc, char* const argv[])
     }
     argc -= optind;
     argv += optind;
-    if (argc < 1) usage("not enough arguments");
+    if (argc < 1) usage("dbname required");
 
     // Open/create and initialize the database
     if (auto rc = sqlite3_open(argv[0], &db)) {
@@ -182,28 +208,38 @@ main(int argc, char* const argv[])
         usage("check statement preparation failed", rc);
     }
 
-    // Execute the prepared statements in a random shuffle according to
-    // the preponderance constants set above.
+    // Cleanup and print a nice message when dying
+    signal(SIGINT,  die);
+    signal(SIGTERM, die);
+    atexit(cleanup);
+
+    // Main work loop
     size_t n = 0;
     srand48(time(0));
     while (true) {
-        ++n;
-
+        // Select one of the prepared statements at random according to
+        // the preponderance constants set above.
+        size_t* pcounter;
         auto r = drand48();
         sqlite3_stmt* st = 0;
         if (r < delete_factor) {
             st = delete_st;
+            pcounter = &deletes;
         }
         else if (r < delete_factor + update_factor) {
             st = update_st;
+            pcounter = &updates;
         }
         else if (r < delete_factor + update_factor + insert_factor) {
             st = insert_st;
+            pcounter = &inserts;
         }
         else {
             st = select_st;
+            pcounter = &selects;
         }
 
+        // Execute the selected statement
         bool done = false;
         do {
 try_again:  switch (auto rc = sqlite3_step(st)) {
@@ -215,9 +251,6 @@ try_again:  switch (auto rc = sqlite3_step(st)) {
                 case SQLITE_ROW:
                     if (verbose) {
                         cout << "ROW: " << sqlite3_column_text(st, 0) << "\n";
-                    }
-                    if (progress && ((n % PROGDOTSKIP) == 0)) {
-                        cout << '.' << flush;
                     }
                     break;
 
@@ -241,7 +274,12 @@ try_again:  switch (auto rc = sqlite3_step(st)) {
         }
         while (!done);
         sqlite3_reset(st);
-        //cout << "EXECUTED " << sql << endl;
+
+        // Keep stats for exit report
+        if (((++records % PROGDOTSKIP) == 0) && progress) {
+            cout << '.' << flush;
+        }
+        ++*pcounter;
 
         // Is the database still well-formed?
         bool first = true;
