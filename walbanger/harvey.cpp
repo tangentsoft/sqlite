@@ -281,8 +281,7 @@ try_again:  switch (auto rc = sqlite3_step(st)) {
 
         // Keep stats for exit report
         if (((++records % PROGDOTSKIP) == 0) && progress) {
-            cout << "ID[" << sqlite3_last_insert_rowid(db) <<
-                    ']' << flush;
+            cout << "ID[" << sqlite3_last_insert_rowid(db) << "]\n";
         }
         ++*pcounter;
 
