@@ -20,7 +20,7 @@ This awkward language is a simple reflection of the fact that you cannot
 prove a negative.  We cannot say “SQLite’s WAL mode will never corrupt
 your database when used across a container boundary.”  The best we can
 say is that we *failed* to make it corrupt the database in a given test
-scenario.
+scenario.o
 
 
 ## How to Use It
@@ -121,6 +121,24 @@ hear about it. I suggest contacting me through [the main SQLite
 forum][for1] if the matter is of general interest, or [this repo’s
 forum][for2] otherwise.
 
+
+## Portability
+
+The program is written in the C++11 dialect of C++.
+
+Since the current focus of the tool is on testing inter-container
+database access, it was written for and tested on POSIX type platforms.
+
+Lack of Windows support is not considered a serious problem. The Alpine
+Linux based container built by the included [`Dockerfile`](./Dockerfile)
+will run on the Windows version of Docker.
+
+If you wish to port the program to run natively on Windows, beware that
+SQLite database locking isn’t portable across kernel types without going
+out of your way with build options and/or VFS overrides. ([Ask me how I
+know…])
+
 [dsm]:  https://docs.docker.com/engine/swarm/
 [for1]: https://sqlite.org/forum
 [for2]: https://tangentsoft.com/sqlite/forum
+[sqlk]: https://stackoverflow.com/a/11887905/142454
