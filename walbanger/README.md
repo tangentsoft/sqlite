@@ -5,7 +5,7 @@
 Harvey the WAL-Banger is a program that attempts to *disprove* the
 proposition that SQLite’s WAL mode is safe across some given boundary.
 It was originally written to test the OCI container boundary, since it
-is not immediately clear that sharing a Linux kernel allow’s WAL’s
+is not immediately clear that sharing a Linux kernel allows WAL’s
 shared memory and locking calls to cooperate across that boundary.
 
 Contrast a network file share, where WAL definitely doesn’t work.  While
