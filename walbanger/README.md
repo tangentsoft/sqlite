@@ -71,9 +71,10 @@ would support this hypotheiss.
 # Challenge
 
 If you can find a way to make this program fail, reliably, I’d like to
-hear about it. I suggest contacting me through the main SQLite forum if
-the matter is of general interest, or [this repo’s forum][for]
-otherwise.
+hear about it. I suggest contacting me through [the main SQLite
+forum][for1] if the matter is of general interest, or [this repo’s
+forum][for2] otherwise.
 
-[dsm]: https://docs.docker.com/engine/swarm/
-[for]: https://tangentsoft.com/sqlite/forum
+[dsm]:  https://docs.docker.com/engine/swarm/
+[for1]: https://sqlite.org/forum
+[for2]: https://tangentsoft.com/sqlite/forum
