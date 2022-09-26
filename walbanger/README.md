@@ -24,9 +24,9 @@ way to orchestrate several containers on a single computer.  The
 short-and-sweet is:
 
 ```shell
-  $ docker swarm init
-  $ make swarm
-  $ docker service logs -f walbanger
+$ docker swarm init
+$ make swarm
+$ docker service logs -f walbanger
 ```
 
 That’s it.  It should build the container image and then deploy 3
@@ -48,13 +48,13 @@ against another copy running out on the host.  In one terminal window,
 say:
 
 ```she]l
-  $ make single
+$ make single
 ```
 
 …and then in another terminal say:
 
 ```
-  $ make run
+$ make run
 ```
 
 The first will run a single container instance with your user’s `~/tmp`
