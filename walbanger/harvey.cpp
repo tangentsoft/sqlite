@@ -103,11 +103,12 @@ static void
 cleanup(void)
 {
     if (db) sqlite3_close(db);
-    cout << "\nHit the DB " << records << " times:\n";
-    cout << "  SELECT: " << selects << "\n";
-    cout << "  INSERT: " << inserts << "\n";
-    cout << "  UPDATE: " << updates << "\n";
-    cout << "  DELETE: " << deletes << "\n";
+    cout << "\nHit the DB " << records << " times:"
+            "\n  SELECT: " << selects <<
+            "\n  INSERT: " << inserts <<
+            "\n  UPDATE: " << updates <<
+            "\n  DELETE: " << deletes <<
+            "\n";
 }
 
 static void
@@ -252,7 +253,8 @@ try_again:  switch (auto rc = sqlite3_step(st)) {
 
                 case SQLITE_ROW:
                     if (verbose) {
-                        cout << "ROW: " << sqlite3_column_text(st, 0) << "\n";
+                        cout << "HASH[" << sqlite3_column_text(st, 0) <<
+                                ']' << flush;
                     }
                     break;
 
@@ -279,7 +281,8 @@ try_again:  switch (auto rc = sqlite3_step(st)) {
 
         // Keep stats for exit report
         if (((++records % PROGDOTSKIP) == 0) && progress) {
-            cout << '.' << flush;
+            cout << "ID[" << sqlite3_last_insert_rowid(db) <<
+                    ']' << flush;
         }
         ++*pcounter;
 
