@@ -1,0 +1,10 @@
+#!/bin/sh
+if [ -f ../.fslckout ]
+then
+    fossil status | grep checkout | cut -c 15-24
+elif [ -f ../.git ]
+then
+    git describe --abbrev=10 --dirty --always --tags
+else
+    echo latest
+fi

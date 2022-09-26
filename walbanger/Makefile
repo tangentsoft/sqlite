@@ -3,7 +3,7 @@ LDFLAGS  := -lsqlite3
 
 EXE      := walbanger
 DBNAME   := ~/tmp/$(EXE).db
-VERSION  := $(shell if [ -f ../.fslckout ] ; then fossil status | grep checkout | cut -c 15-24 ; else echo latest ; fi)
+VERSION  := $(shell ../tools/version)
 
 all: $(EXE)
 	
