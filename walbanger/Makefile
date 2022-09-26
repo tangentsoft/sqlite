@@ -4,6 +4,7 @@ LDFLAGS  := -lsqlite3
 EXE      := walbanger
 DBNAME   := ~/tmp/$(EXE).db
 VERSION  := $(shell ../tools/version)
+FILEURL  := $(shell ../tools/fileurl $(VERSION))
 
 all: $(EXE)
 	
@@ -13,7 +14,9 @@ clean:
 	@-docker container rm $(EXE)-$(VERSION)
 
 container-image:
-	docker build --tag $(EXE):$(VERSION) .
+	docker build \
+		--build-arg FILEURL="$(FILEURL)" \
+		--tag $(EXE):$(VERSION) .
 
 container-run: container-image
 	@-docker container rm $(EXE)-$(VERSION)
@@ -22,8 +25,6 @@ container-run: container-image
 		--volume ~/tmp:/db \
 		--name $(EXE)-$(VERSION) \
 		       $(EXE):$(VERSION)
-	docker cp entrypoint.sh $(EXE)-$(VERSION):/
-	docker cp harvey.cpp    $(EXE)-$(VERSION):/
 	docker start -ai $(EXE)-$(VERSION)
 
 single: container-run

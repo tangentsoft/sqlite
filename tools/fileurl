@@ -1,0 +1,7 @@
+#!/bin/sh
+if [ ../.fslckout ]
+then
+    echo "$(fossil remote-url)/raw?ci=${1}&filename="
+else
+    echo 'https://tangentsoft.com/sqlite/raw?ci=trunk&filename='
+fi
