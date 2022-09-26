@@ -8,4 +8,4 @@ ARG FILEURL=https://tangentsoft.com/sqlite/raw?ci=trunk&filename=
 ADD ${FILEURL}walbanger/harvey.cpp /harvey.cpp
 RUN g++ -O2 harvey.cpp -o walbanger -lsqlite3
 
-ENTRYPOINT [ "/walbanger", "/db/walbanger.db" ]
+ENTRYPOINT [ "/walbanger", "-p", "/db/walbanger.db" ]
