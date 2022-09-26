@@ -253,7 +253,7 @@ try_again:  switch (auto rc = sqlite3_step(st)) {
 
                 case SQLITE_ROW:
                     if (verbose) {
-                        cout << "HASH[" << sqlite3_column_text(st, 0) <<
+                        cout << "\nHASH[" << sqlite3_column_text(st, 0) <<
                                 ']' << flush;
                     }
                     break;
