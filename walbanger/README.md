@@ -136,7 +136,7 @@ will run on the Windows version of Docker.
 If you wish to port the program to run natively on Windows, beware that
 SQLite database locking isn’t portable across kernel types without going
 out of your way with build options and/or VFS overrides. ([Ask me how I
-know…])
+know…][sqlk])
 
 [dsm]:  https://docs.docker.com/engine/swarm/
 [for1]: https://sqlite.org/forum
