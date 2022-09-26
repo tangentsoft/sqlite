@@ -1,1 +1,1 @@
-Programs and information related to SQLite, which has no better place to be.
+Programs and information related to SQLite which have no better place to be.
