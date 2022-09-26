@@ -46,7 +46,7 @@ static const auto delete_factor = deletes / types;
 
 //// GLOBALS ///////////////////////////////////////////////////////////
 
-sqlite3* db;
+static sqlite3* db;
 
 
 //// usage /////////////////////////////////////////////////////////////
@@ -228,7 +228,7 @@ try_again:  switch (auto rc = sqlite3_step(st)) {
                     break;
 
                 case SQLITE_BUSY: 
-                    usleep(n * 1000);
+                    usleep(r * 1000);
                     goto try_again;
 
                 default:
