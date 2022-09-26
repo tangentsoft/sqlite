@@ -10,8 +10,9 @@
 #include <unistd.h>
 #include <iostream>
 #include <sstream>
-#include <signal.h>
-#include <stdlib.h>
+#include <csignal>
+#include <cstdlib>
+#include <cstring>
 
 using namespace std;
 
@@ -269,7 +270,7 @@ try_again:  switch (auto rc = sqlite3_step(st)) {
                             sqlite3_expanded_sql(st) <<
                             "\nERROR: " << sqlite3_errmsg(db) <<
                             ", RC=" << rc << ".\n";
-                    break;
+                    exit(1);
             }
         }
         while (!done);
