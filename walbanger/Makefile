@@ -10,9 +10,9 @@ all: $(EXE)
 	
 clean:
 	@rm -f *.o $(EXE)
-	@-docker container rm $(EXE)-$(VERSION)
-	@-docker service   rm $(EXE)
-	@-docker image     rm $(EXE):$(VERSION)
+	@-docker container rm $(EXE)-$(VERSION) > /dev/null 2>&1
+	@-docker service   rm $(EXE)            > /dev/null 2>&1
+	@-docker image     rm $(EXE):$(VERSION) > /dev/null 2>&1
 
 container-image:
 	docker build \
@@ -20,7 +20,7 @@ container-image:
 		--tag $(EXE):$(VERSION) .
 
 container-run: container-image
-	@-docker container rm $(EXE)-$(VERSION)
+	@-docker container rm $(EXE)-$(VERSION) > /dev/null 2>&1
 	docker container create \
 		--interactive --tty \
 		--volume ~/tmp:/db \
@@ -31,7 +31,7 @@ container-run: container-image
 single: container-run
 
 swarm: container-image
-	@-docker service rm $(EXE)
+	@-docker service rm $(EXE) > /dev/null 2>&1
 	docker service create \
 		--name $(EXE) \
 		--replicas 3 \
