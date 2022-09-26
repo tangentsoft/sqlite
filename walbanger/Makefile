@@ -10,8 +10,9 @@ all: $(EXE)
 	
 clean:
 	@rm -f *.o $(EXE)
-	@-docker image     rm $(EXE):$(VERSION)
 	@-docker container rm $(EXE)-$(VERSION)
+	@-docker service   rm $(EXE)
+	@-docker image     rm $(EXE):$(VERSION)
 
 container-image:
 	docker build \
@@ -28,6 +29,15 @@ container-run: container-image
 	docker start -ai $(EXE)-$(VERSION)
 
 single: container-run
+
+swarm: container-image
+	@-docker service rm $(EXE)
+	docker service create \
+		--name $(EXE) \
+		--replicas 3 \
+		--mount type=volume,destination=/db \
+		--constraint node.role==manager \
+		$(EXE):$(VERSION)
 
 run: all
 	@./$(EXE) -pr $(DBNAME)
