@@ -3,6 +3,7 @@ LDFLAGS  := -lsqlite3
 
 EXE      := walbanger
 DBNAME   := ~/tmp/$(EXE).db
+DBVOL    := $(EXE)-vol
 VERSION  := $(shell ../tools/version)
 FILEURL  := $(shell ../tools/fileurl $(VERSION))
 
@@ -32,10 +33,13 @@ single: container-run
 
 swarm: container-image
 	@-docker service rm $(EXE) > /dev/null 2>&1
+	@if ! docker volume inspect $(DBVOL) > /dev/null 2>&1 ; then \
+		docker volume create --name $(DBVOL) ; \
+	fi
 	docker service create \
 		--name $(EXE) \
 		--replicas 3 \
-		--mount type=volume,destination=/db \
+		--mount source=$(DBVOL),destination=/db \
 		--constraint node.role==manager \
 		$(EXE):$(VERSION)
 
