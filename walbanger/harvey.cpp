@@ -48,7 +48,7 @@ static const auto update_factor = update_proportion / types;
 static const auto delete_factor = delete_proportion / types;
 
 // In -p mode, how many statements to skip printing a dot for.
-#define PROGDOTSKIP 1000
+#define PROGDOTSKIP 10
 
 
 //// GLOBALS ///////////////////////////////////////////////////////////
@@ -218,24 +218,30 @@ main(int argc, char* const argv[])
 
     // Main work loop
     size_t n = 0;
+    char datapoint = '.';
     srand48(time(0));
     while (true) {
         // Select one of the prepared statements at random according to
         // the preponderance constants set above.
         size_t* pcounter;
         auto r = drand48();
+        bool log_insert = false;
         sqlite3_stmt* st = 0;
         if (r < delete_factor) {
             st = delete_st;
             pcounter = &deletes;
+            datapoint = 'x';
         }
         else if (r < delete_factor + update_factor) {
             st = update_st;
             pcounter = &updates;
+            datapoint = '*';
         }
         else if (r < delete_factor + update_factor + insert_factor) {
             st = insert_st;
             pcounter = &inserts;
+            log_insert = progress;
+            datapoint = '+';
         }
         else {
             st = select_st;
@@ -281,9 +287,13 @@ try_again:  switch (auto rc = sqlite3_step(st)) {
 
         // Keep stats for exit report
         if (((++records % PROGDOTSKIP) == 0) && progress) {
-            cout << "ID[" << sqlite3_last_insert_rowid(db) << "]\n";
+            cout << datapoint << flush;
+            datapoint = '.';
         }
         ++*pcounter;
+        if (log_insert) {
+            cout << "\nID[" << sqlite3_last_insert_rowid(db) << "]";
+        }
 
         // Is the database still well-formed?
         bool first = true;
