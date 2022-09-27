@@ -24,7 +24,7 @@ using namespace std;
 // each type of statement should run, on average.  Adjust to suit.
 #if 1
     // Read-heavy "application" type mix
-    static const auto select_proportion = 900;
+    static const auto select_proportion = 979;    // makes it total 1000
     static const auto insert_proportion = 10;
     static const auto update_proportion = 10;
     static const auto delete_proportion = 1;
