@@ -30,8 +30,7 @@ container-run: container-image
 
 single: container-run
 
-swarm: container-image
-	@-docker service rm $(EXE) > /dev/null 2>&1
+swarm: container-image swarm-stop
 	@if ! docker volume inspect $(EXE) > /dev/null 2>&1 ; then \
 		docker volume create --name $(EXE) ; \
 	fi
@@ -41,6 +40,12 @@ swarm: container-image
 		--mount source=$(EXE),destination=/db \
 		--constraint node.role==manager \
 		$(EXE):$(VERSION)
+
+swarm-shell:
+	@docker exec -it -w /db $(docker ps -q -f name="$(EXE).1.[0-9a-f]+") sh
+
+swarm-stop:
+	@-docker service rm $(EXE) > /dev/null 2>&1
 
 run: all
 	@./$(EXE) -pr $(DBNAME)
