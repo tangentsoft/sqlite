@@ -4,11 +4,11 @@
 
 This tool attempts to *disprove* the
 proposition that [SQLite’s WAL mode][WALdoc] is safe across some given boundary.
-It was originally written to test the OCI container boundary, since it
+It was originally written to test the [OCI] container boundary, since it
 is not immediately clear that sharing a Linux kernel allows WAL’s
 shared memory and locking calls to cooperate across that boundary.
 
-Contrast a network file share, where WAL definitely doesn’t work, as
+Contrast a network file share, where WAL definitely doesn’t work,
 called out as disadvantage #2 in the prior link. This program can
 prove that fact to you: simply run it from two different machines
 simultaneously, pointing them both at the same test database on a
@@ -32,6 +32,7 @@ There is [a video](https://vimeo.com/754113094) showing the program in
 action, including instructions on how to configure it, run it, and
 interpret its output.
 
+[OCI]:    https://opencontainers.org/
 [WALdoc]: https://www.sqlite.org/wal.html
 
 
