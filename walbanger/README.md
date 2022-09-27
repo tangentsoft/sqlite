@@ -1,26 +1,38 @@
-# Harvey the WAL-Banger
+# About Harvey the WAL-Banger
 
 ## What It Is
 
-Harvey the WAL-Banger is a program that attempts to *disprove* the
-proposition that SQLite’s WAL mode is safe across some given boundary.
+This tool attempts to *disprove* the
+proposition that [SQLite’s WAL mode][WALdoc] is safe across some given boundary.
 It was originally written to test the OCI container boundary, since it
 is not immediately clear that sharing a Linux kernel allows WAL’s
 shared memory and locking calls to cooperate across that boundary.
 
-Contrast a network file share, where WAL definitely doesn’t work.  While
-this program doesn’t add much to the world knowledge base on that topic,
-being a settled question, it does serve as a tool for showing people
-inclined to believe this is safe that it is not.
+Contrast a network file share, where WAL definitely doesn’t work, as
+called out as disadvantage #2 in the prior link. This program can
+prove that fact to you: simply run it from two different machines
+simultaneously, pointing them both at the same test database on a
+shared volume.
 
-If the program produces no errors, it disproves nothing, but if it blows
-up, you’ve shown that WAL is unsafe *in that specific test scenario.*
+If the program produces no errors, it doesn't prove the test condition
+safe; it merely proves that you have *failed to fail* **so far**.
+More interesting is when it gives an error, since that is a definitive
+result. The only thing you can do from the state of lack-of-failure is
+to keep trying until you decide that nothing you can do will break it.
+Only then can you call the test condition provisionally safe, pending
+later proof that it isn't. Such is the nature of epistemology, alas.
 
-This awkward language is a simple reflection of the fact that you cannot
-prove a negative.  We cannot say “SQLite’s WAL mode will never corrupt
-your database when used across a container boundary.”  The best we can
-say is that we *failed* to make it corrupt the database in a given test
-scenario.o
+We can never say “SQLite’s WAL mode will never corrupt
+your database when used in condition X.”  The best we can
+say is that we *failed* to make it corrupt the database in that test
+scenario. If the test doesn't match reality, or if the test is incomplete,
+it will fail to find the corner case that breaks things.
+
+There is [a video](https://vimeo.com/754113094) showing the program in
+action, including instructions on how to configure it, run it, and
+interpret its output.
+
+[WALdoc]: https://www.sqlite.org/wal.html
 
 
 ## How to Use It
