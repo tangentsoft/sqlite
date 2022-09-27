@@ -147,16 +147,16 @@ main(int argc, char* const argv[])
     }
     cout << "Opened DB " << argv[0] << "...\n";
     if (reset) {
-        auto sql = R"(
-            PRAGMA journal_mode=wal;
-            DROP TABLE IF EXISTS t1;
-        )";
+        auto sql = "DROP TABLE IF EXISTS t1";
         if (auto rc = sqlite3_exec(db, sql, 0, 0, &errmsg)) {
             usage("reset failed", errmsg);
         }
     }
     {
-        auto sql = "CREATE TABLE IF NOT EXISTS t1 (hash TEXT)";
+        auto sql = R"(
+            PRAGMA journal_mode=wal;
+            CREATE TABLE IF NOT EXISTS t1 (hash TEXT);
+        )";
         if (auto rc = sqlite3_exec(db, sql, 0, 0, &errmsg)) {
             usage("DB creation failed", errmsg);
         }
