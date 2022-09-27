@@ -42,7 +42,7 @@ swarm: container-image swarm-stop
 		$(EXE):$(VERSION)
 
 swarm-shell:
-	@docker exec -it -w /db $(docker ps -q -f name="$(EXE).1.[0-9a-f]+") sh
+	@docker exec -it -w /db $$(docker ps -q -f name='^$(EXE).1.[0-9a-z]+$$') sh
 
 swarm-stop:
 	@-docker service rm $(EXE) > /dev/null 2>&1
