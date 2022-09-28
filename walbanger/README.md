@@ -17,7 +17,7 @@ later proof that it isn't. Such is the nature of epistemology, alas.
 
 You might hope for it to not give an error, but realize that this is the
 more interesting condition, since that is a definitive result. If you can
-[make it fail in an interesting way](./README.md#failure-modes) you've
+[make it fail in an interesting way][fmodes] you've
 learned something definite about how SQLite works under that condition.
 
 We can never say “SQLite’s WAL mode will never corrupt
@@ -30,6 +30,7 @@ There is [a video](https://vimeo.com/754113094) showing the program in
 action, including instructions on how to configure it, run it, and
 interpret its output.
 
+[fmodes]: /doc/trunk/walbanger/README.md#failure-modes
 [OCI]:    https://opencontainers.org/
 [WALdoc]: https://www.sqlite.org/wal.html
 
