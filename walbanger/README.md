@@ -17,8 +17,9 @@ later proof that it isn't. Such is the nature of epistemology, alas.
 
 You might hope for it to not give an error, but realize that this is the
 more interesting condition, since that is a definitive result. If you can
-[make it fail in an interesting way][fmodes] you've
+[make `walbanger` fail in an interesting way][fmodes], you will have
 learned something definite about how SQLite works under that condition.
+This is valuable knowledge.
 
 We can never say “SQLite’s WAL mode will never corrupt
 your database when used in condition X.”  The best we can
@@ -26,13 +27,16 @@ say is that we *failed* to make it corrupt the database in that test
 scenario. If the test doesn't match reality, or if the test is incomplete,
 it will fail to find the corner case that breaks things.
 
-There is [a video](https://vimeo.com/754113094) showing the program in
+I've made [an 18-minute demonstration video][demo] showing the program in
 action, including instructions on how to configure it, run it, and
-interpret its output.
+interpret its output. There's also [a short follow-up video][fup] giving
+additional details.
 
 [fmodes]: /doc/trunk/walbanger/README.md#failure-modes
 [OCI]:    https://opencontainers.org/
 [WALdoc]: https://www.sqlite.org/wal.html
+[demo]:   https://vimeo.com/754113094
+[fup]:    https://vimeo.com/754493320
 
 
 ## <a id="how"></a>How to Use It
