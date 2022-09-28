@@ -2,7 +2,8 @@ CXXFLAGS := -g -O0 --std=c++11
 LDFLAGS  := -lsqlite3
 
 EXE      := walbanger
-DBNAME   := ~/tmp/$(EXE).db
+DBDIR    := ~/tmp
+DBNAME   := $(DBDIR)/$(EXE).db
 VERSION  := $(shell ../tools/version)
 FILEURL  := $(shell ../tools/fileurl $(VERSION))
 
@@ -19,21 +20,24 @@ container-image:
 		--build-arg FILEURL="$(FILEURL)" \
 		--tag $(EXE):$(VERSION) .
 
-container-run: container-image
-	@-docker container rm $(EXE)-$(VERSION) > /dev/null 2>&1
-	docker container create \
-		--interactive --tty \
-		--volume ~/tmp:/db \
-		--name $(EXE)-$(VERSION) \
-		       $(EXE):$(VERSION)
-	docker start -ai $(EXE)-$(VERSION)
+container-volume:
+	@if ! docker volume inspect $(EXE) > /dev/null 2>&1 ; then \
+		docker volume create --name $(EXE) ; \
+	fi
 
 run: all
 	@./$(EXE) -pr $(DBNAME)
 
-single: container-run
+solo: container-volume
+	@-docker container rm $(EXE)-$(VERSION) > /dev/null 2>&1
+	docker container create \
+		--interactive --tty \
+		--volume $(EXE):/db \
+		--name $(EXE)-$(VERSION) \
+		       $(EXE):$(VERSION)
+	docker start -ai $(EXE)-$(VERSION)
 
-swarm: container-image swarm-stop swarm-volume
+swarm: container-image swarm-stop container-volume
 	docker service create \
 		--name $(EXE) \
 		--replicas 3 \
@@ -46,11 +50,6 @@ swarm-shell:
 
 swarm-stop:
 	@-docker service rm $(EXE) > /dev/null 2>&1
-
-swarm-volume:
-	@if ! docker volume inspect $(EXE) > /dev/null 2>&1 ; then \
-		docker volume create --name $(EXE) ; \
-	fi
 
 tags ctags:
 	ctags -R .
