@@ -28,11 +28,11 @@ container-volume:
 run: all
 	@./$(EXE) -pr $(DBNAME)
 
-solo: container-volume
+solo: container-image container-volume
 	@-docker container rm $(EXE)-$(VERSION) > /dev/null 2>&1
 	docker container create \
 		--interactive --tty \
-		--volume $(EXE):/db \
+		--volume $(DBDIR):/db \
 		--name $(EXE)-$(VERSION) \
 		       $(EXE):$(VERSION)
 	docker start -ai $(EXE)-$(VERSION)
