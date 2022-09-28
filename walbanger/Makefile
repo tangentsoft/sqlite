@@ -37,7 +37,7 @@ solo: container-volume
 		       $(EXE):$(VERSION)
 	docker start -ai $(EXE)-$(VERSION)
 
-swarm: container-image swarm-stop container-volume
+swarm: container-image container-volume swarm-stop
 	docker service create \
 		--name $(EXE) \
 		--replicas 3 \
