@@ -13,6 +13,7 @@ clean:
 	@rm -f *.o $(EXE)
 	@-docker container rm $(EXE)-$(VERSION) > /dev/null 2>&1
 	@-docker service   rm $(EXE)            > /dev/null 2>&1
+	@-docker volume    rm $(EXE)            > /dev/null 2>&1
 	@-docker image     rm $(EXE):$(VERSION) > /dev/null 2>&1
 
 container-image:
