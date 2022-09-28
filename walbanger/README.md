@@ -17,8 +17,8 @@ later proof that it isn't. Such is the nature of epistemology, alas.
 
 You might hope for it to not give an error, but realize that this is the
 more interesting condition, since that is a definitive result. If you can
-[make it fail in an interesting way](#failure-modes) you've learned something
-definite about how SQLite works under that condition.
+[make it fail in an interesting way](./README.md#failure-modes) you've
+learned something definite about how SQLite works under that condition.
 
 We can never say “SQLite’s WAL mode will never corrupt
 your database when used in condition X.”  The best we can
