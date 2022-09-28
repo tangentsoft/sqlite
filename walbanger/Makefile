@@ -33,10 +33,7 @@ run: all
 
 single: container-run
 
-swarm: container-image swarm-stop
-	@if ! docker volume inspect $(EXE) > /dev/null 2>&1 ; then \
-		docker volume create --name $(EXE) ; \
-	fi
+swarm: container-image swarm-stop swarm-volume
 	docker service create \
 		--name $(EXE) \
 		--replicas 3 \
@@ -49,6 +46,11 @@ swarm-shell:
 
 swarm-stop:
 	@-docker service rm $(EXE) > /dev/null 2>&1
+
+swarm-volume:
+	@if ! docker volume inspect $(EXE) > /dev/null 2>&1 ; then \
+		docker volume create --name $(EXE) ; \
+	fi
 
 tags ctags:
 	ctags -R .
