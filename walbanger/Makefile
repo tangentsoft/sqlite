@@ -32,7 +32,7 @@ solo: container-image container-volume
 	@-docker container rm $(EXE)-$(VERSION) > /dev/null 2>&1
 	docker container create \
 		--interactive --tty \
-		--volume $(DBDIR):/db \
+		--volume $(EXE):/db \
 		--name $(EXE)-$(VERSION) \
 		       $(EXE):$(VERSION)
 	docker start -ai $(EXE)-$(VERSION)
