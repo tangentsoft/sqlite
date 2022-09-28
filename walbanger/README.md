@@ -8,19 +8,17 @@ It was originally written to test the [OCI] container boundary, since it
 is not immediately clear that sharing a Linux kernel allows WAL’s
 shared memory and locking calls to cooperate across that boundary.
 
-Contrast a network file share, where WAL definitely doesn’t work,
-called out as disadvantage #2 in the prior link. This program can
-prove that fact to you: simply run it from two different machines
-simultaneously, pointing them both at the same test database on a
-shared volume.
-
 If the program produces no errors, it doesn't prove the test condition
-safe; it merely proves that you have *failed to fail* **so far**.
-More interesting is when it gives an error, since that is a definitive
-result. The only thing you can do from the state of lack-of-failure is
+safe; it merely proves that you have *failed to fail* **so far**. The
+only thing you can do from the state of lack-of-failure is
 to keep trying until you decide that nothing you can do will break it.
 Only then can you call the test condition provisionally safe, pending
 later proof that it isn't. Such is the nature of epistemology, alas.
+
+You might hope for it to not give an error, but realize that this is the
+more interesting condition, since that is a definitive result. If you can
+[make it fail in an interesting way](#failure-modes) you've learned something
+definite about how SQLite works under that condition.
 
 We can never say “SQLite’s WAL mode will never corrupt
 your database when used in condition X.”  The best we can
@@ -36,7 +34,7 @@ interpret its output.
 [WALdoc]: https://www.sqlite.org/wal.html
 
 
-## How to Use It
+## <a id="how"></a>How to Use It
 
 ### Trivial Way
 
@@ -122,20 +120,8 @@ hypervisor. I haven’t yet tested on Linux to see if the problem occurs
 there, too. If not, it would support this hypothesis.
 
 
-### Evil Way
 
-Run this program across a network file share. Watch sparks fly.
-
-
-## Challenge
-
-If you can find a way to make this program fail, reliably, I’d like to
-hear about it. I suggest contacting me through [the main SQLite
-forum][for1] if the matter is of general interest, or [this repo’s
-forum][for2] otherwise.
-
-
-## Portability
+## <a id="portability"></a>Portability
 
 The program is written in the C++11 dialect of C++.
 
@@ -144,12 +130,68 @@ database access, it was written for and tested on POSIX type platforms.
 
 Lack of Windows support is not considered a serious problem. The Alpine
 Linux based container built by the included [`Dockerfile`](./Dockerfile)
-will run on the Windows version of Docker.
+will run on the Windows version of Docker, and it will of course build and
+run under WSL2.
 
-If you wish to port the program to run natively on Windows, beware that
-SQLite database locking isn’t portable across kernel types without going
-out of your way with build options and/or VFS overrides. ([Ask me how I
-know…][sqlk])
+
+## <a id="results"></a>Results
+
+The most stringent test we've put `walbanger` to so far is running 75 instances
+under Docker Swarm on a ten-core macOS 12 box for five hours, then starting a
+background script that started killing instances off at random, one per minute.
+After nine hours of that, it still hadn't corrupted the database.
+
+
+## <a id="failure-modes"></a>Known Failure Modes
+
+All of SQLite's "[How To Corrupt An SQLite Database File][sqcor]" warnings
+apply, so one of the less valuable things this program offers is a quick
+and easy way to trigger these documented failure modes. For instance, running
+this program across a network file sharing protocol is expected to fail.
+If you've read about that but never saw it happen yourself because you
+heeded the warnings, this program provides a quick way to demonstrate
+the failure without putting valuable data at risk.
+
+
+### Split Kernels
+
+One of the less obvious ways we've seen this program fail is to run the
+program as a container on the Windows or macOS version of Docker or
+Podman, then run a separate copy of the program against the same test
+database. It'll fail because you've broken the shared-kernel link that
+allows the instances to cooperate in the primary test cases listed
+above. Container runtimes on non-Linux OSes must create a hidden
+background Linux VM to run the containers under since the host OSes
+don't have the kernel primitives needed to run containers themselves.
+
+Contrariwise, it might not fail if you put the database into DELETE mode
+before running this test, because that simpler locking model can
+cooperate across this boundary, under the right conditions. I've seen it
+succeed on macOS, for one. I haven't tested it on Windows, but [I know
+enough about the matter][sqlk] from a past life to expect it to *fail*
+if the host-side binary is built under Cygwin or you port it to native
+Windows via MinGW or Visual C++.
+
+An interesting experiment would be to find out whether it fails when run
+as a container under Docker Desktop for Windows while another copy is
+running out in WSL2. They *should* share a kernel in this instance, so I
+would expect it to succeed. If anyone tries this, I'd be willing to
+publish your results.
+
+
+### A Challenge
+
+If you can find other ways to make this program fail, reliably, I’d like to
+hear about it, particularly if you think it's *not expected* to fail.
+
+If you can pull off such a feat, I suggest contacting me through
+[the main SQLite forum][for1] if the matter is of general interest, or
+[this repo’s forum][for2] otherwise.
+
+[sqcor]: https://www.sqlite.org/howtocorrupt.html
+
+
+<div id="this-space-left-blank-intentionally" style="height:50em"></div>
 
 [dsm]:  https://docs.docker.com/engine/swarm/
 [for1]: https://sqlite.org/forum
