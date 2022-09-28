@@ -28,6 +28,9 @@ container-run: container-image
 		       $(EXE):$(VERSION)
 	docker start -ai $(EXE)-$(VERSION)
 
+run: all
+	@./$(EXE) -pr $(DBNAME)
+
 single: container-run
 
 swarm: container-image swarm-stop
@@ -36,9 +39,9 @@ swarm: container-image swarm-stop
 	fi
 	docker service create \
 		--name $(EXE) \
-		--replicas 3 \
+		--replicas 40 \
 		--mount source=$(EXE),destination=/db \
-		--constraint node.role==manager \
+		--constraint node.platform.os==macos \
 		$(EXE):$(VERSION)
 
 swarm-shell:
@@ -47,8 +50,8 @@ swarm-shell:
 swarm-stop:
 	@-docker service rm $(EXE) > /dev/null 2>&1
 
-run: all
-	@./$(EXE) -pr $(DBNAME)
+tags ctags:
+	ctags -R .
 
 $(EXE): harvey.o
 	$(CXX) $< -o $(EXE) $(LDFLAGS)
