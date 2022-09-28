@@ -39,9 +39,9 @@ swarm: container-image swarm-stop
 	fi
 	docker service create \
 		--name $(EXE) \
-		--replicas 40 \
+		--replicas 3 \
 		--mount source=$(EXE),destination=/db \
-		--constraint node.platform.os==macos \
+		--constraint node.role==manager \
 		$(EXE):$(VERSION)
 
 swarm-shell:
