@@ -296,7 +296,7 @@ try_again:  switch (auto rc = sqlite3_step(st)) {
         }
 
         // Is the database still well-formed?
-        bool first = true;
+        bool first = true, fail = false;
         while (sqlite3_step(check_st) == SQLITE_ROW) {
             auto res = sqlite3_column_text(check_st, 0);
             if (first) {
@@ -306,10 +306,12 @@ try_again:  switch (auto rc = sqlite3_step(st)) {
                 else {
                     cerr << "Integrity check failed:\n";
                     first = false;
+                    fail = true;
                 }
             }
             cerr << "    " << res << "\n";
         }
+        if (fail) exit(3);
         sqlite3_reset(check_st);
     }
 
