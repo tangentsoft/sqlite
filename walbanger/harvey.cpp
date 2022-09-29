@@ -264,15 +264,15 @@ try_again:  switch (auto rc = sqlite3_step(st)) {
                     }
                     break;
 
+                case SQLITE_BUSY:
+                    usleep(r * 1000);
+                    goto try_again;
+
                 case SQLITE_ERROR:
                     cerr << "Failed to execute " <<
                             sqlite3_expanded_sql(st) <<
                             "\nERROR: " << sqlite3_errmsg(db) << "\n";
                     break;
-
-                case SQLITE_BUSY:
-                    usleep(r * 1000);
-                    goto try_again;
 
                 default:
                     cerr << "State machine out of whack executing " <<
