@@ -47,7 +47,7 @@ solo: container-image container-volume
 		--cap-drop SETUID \
 		--cap-drop SYS_CHROOT \
 		--interactive --tty \
-			--volume $(EXE):/db \
+		--mount source=$(EXE),destination=/db \
 		--name $(EXE)-$(VERSION) \
 		       $(EXE):$(VERSION)
 	docker start -ai $(EXE)-$(VERSION)
