@@ -27,16 +27,14 @@ say is that we *failed* to make it corrupt the database in that test
 scenario. If the test doesn't match reality, or if the test is incomplete,
 it will fail to find the corner case that breaks things.
 
-I've made [an 18-minute demonstration video][demo] showing the program in
+I've made [a detailed demonstration video][demo] which shows the program in
 action, including instructions on how to configure it, run it, and
-interpret its output. There's also [a short follow-up video][fup] giving
-additional details.
+interpret its output.
 
 [fmodes]: /doc/trunk/walbanger/README.md#failure-modes
 [OCI]:    https://opencontainers.org/
 [WALdoc]: https://www.sqlite.org/wal.html
 [demo]:   https://vimeo.com/754113094
-[fup]:    https://vimeo.com/754493320
 
 
 ## <a id="how"></a>How to Use It
