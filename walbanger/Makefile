@@ -1,4 +1,4 @@
-CXXFLAGS := -g -O0 --std=c++11
+CXXFLAGS := -O2 --std=c++11
 LDFLAGS  := -lsqlite3
 
 EXE      := walbanger
@@ -47,7 +47,7 @@ solo: container-image container-volume
 		--cap-drop SETUID \
 		--cap-drop SYS_CHROOT \
 		--interactive --tty \
-		--volume $(EXE):/db \
+			--volume $(EXE):/db \
 		--name $(EXE)-$(VERSION) \
 		       $(EXE):$(VERSION)
 	docker start -ai $(EXE)-$(VERSION)
