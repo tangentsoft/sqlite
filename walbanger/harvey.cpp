@@ -173,20 +173,20 @@ main(int argc, char* const argv[])
     // Prepare the statements we use against the opened database
     sqlite3_stmt* delete_st = 0;
     if (auto rc = sqlite3_prepare_v2(db, R"(
-                DELETE FROM t1
-                    WHERE rowid = random() % (
-                        SELECT max(rowid) FROM t1
-                    ) + 1
+            DELETE FROM t1
+                WHERE rowid = random() % (
+                    SELECT max(rowid) FROM t1
+                ) + 1
             )", -1, &delete_st, 0)) {
         usage("delete statement preparation failed", rc);
     }
     sqlite3_stmt* update_st = 0;
     if (auto rc = sqlite3_prepare_v2(db, R"(
-                UPDATE t1
-                    SET hash = randomblob(16)
-                    WHERE rowid = random() % (
-                        SELECT max(rowid) FROM t1
-                    ) + 1
+            UPDATE t1
+                SET hash = randomblob(16)
+                WHERE rowid = random() % (
+                    SELECT max(rowid) FROM t1
+                ) + 1
             )", -1, &update_st, 0)) {
         usage("update statement preparation failed", rc);
     }
@@ -198,10 +198,10 @@ main(int argc, char* const argv[])
     }
     sqlite3_stmt* select_st = 0;
     if (auto rc = sqlite3_prepare_v2(db, R"(
-                SELECT hex(hash) FROM t1
-                    WHERE rowid = random() % (
-                        SELECT max(rowid) FROM t1
-                    ) + 1
+            SELECT hex(hash) FROM t1
+                WHERE rowid = random() % (
+                    SELECT max(rowid) FROM t1
+                ) + 1
             )", -1, &select_st, 0)) {
         usage("select statement preparation failed", rc);
     }
@@ -270,7 +270,7 @@ try_again:  switch (auto rc = sqlite3_step(st)) {
                             "\nERROR: " << sqlite3_errmsg(db) << "\n";
                     break;
 
-                case SQLITE_BUSY: 
+                case SQLITE_BUSY:
                     usleep(r * 1000);
                     goto try_again;
 
