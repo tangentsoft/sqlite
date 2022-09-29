@@ -32,6 +32,20 @@ run: all
 solo: container-image container-volume
 	@-docker container rm $(EXE)-$(VERSION) > /dev/null 2>&1
 	docker container create \
+		--cap-drop AUDIT_WRITE \
+		--cap-drop CHOWN \
+		--cap-drop DAC_OVERRIDE \
+		--cap-drop FOWNER \
+		--cap-drop FSETID \
+		--cap-drop KILL \
+		--cap-drop MKNOD \
+		--cap-drop NET_BIND_SERVICE \
+		--cap-drop NET_RAW \
+		--cap-drop SETFCAP \
+		--cap-drop SETGID \
+		--cap-drop SETPCAP \
+		--cap-drop SETUID \
+		--cap-drop SYS_CHROOT \
 		--interactive --tty \
 		--volume $(EXE):/db \
 		--name $(EXE)-$(VERSION) \
@@ -40,6 +54,20 @@ solo: container-image container-volume
 
 swarm: container-image container-volume swarm-stop
 	docker service create \
+		--cap-drop AUDIT_WRITE \
+		--cap-drop CHOWN \
+		--cap-drop DAC_OVERRIDE \
+		--cap-drop FOWNER \
+		--cap-drop FSETID \
+		--cap-drop KILL \
+		--cap-drop MKNOD \
+		--cap-drop NET_BIND_SERVICE \
+		--cap-drop NET_RAW \
+		--cap-drop SETFCAP \
+		--cap-drop SETGID \
+		--cap-drop SETPCAP \
+		--cap-drop SETUID \
+		--cap-drop SYS_CHROOT \
 		--name $(EXE) \
 		--replicas 3 \
 		--mount source=$(EXE),destination=/db \
