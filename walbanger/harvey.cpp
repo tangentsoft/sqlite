@@ -272,14 +272,14 @@ try_again:  switch (auto rc = sqlite3_step(st)) {
                     cerr << "Failed to execute " <<
                             sqlite3_expanded_sql(st) <<
                             "\nERROR: " << sqlite3_errmsg(db) << "\n";
-                    break;
+                    exit(1);
 
                 default:
                     cerr << "State machine out of whack executing " <<
                             sqlite3_expanded_sql(st) <<
                             "\nERROR: " << sqlite3_errmsg(db) <<
                             ", RC=" << rc << ".\n";
-                    exit(1);
+                    exit(2);
             }
         }
         while (!done);
