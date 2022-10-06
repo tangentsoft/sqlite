@@ -145,10 +145,11 @@ run under WSL2.
 
 ## <a id="results"></a>Results
 
-The most stringent test we've put `walbanger` to so far is running 75 instances
-under Docker Swarm on a ten-core macOS 12 box for five hours, then starting a
-background script that started killing instances off at random, one per minute.
-After nine hours of that, it still hadn't corrupted the database.
+The most stringent test we've put `walbanger` to so far is running 100 instances
+under Docker Swarm on a ten-core macOS 12 (Monterey) box overnight — roughly
+12 to 14 hours — during which a background script ran which killed instances off
+at random, one per minute. The database survived to the end of the test without
+being corrupted.
 
 
 ## <a id="failure-modes"></a>Known Failure Modes
