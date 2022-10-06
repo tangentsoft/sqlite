@@ -115,19 +115,9 @@ The first will run a single container instance with your user’s `~/tmp`
 directory mapped into it as `/db`, and the second will run a copy of the
 program *outside* the container against the same directory.
 
-This fails on macOS in my testing here, either with SQLite error code 14
-(can’t open the database) or 26 (not a database file).  I believe it’s
-due to the hidden background VM, since it causes all file I/O to go
-through the QEMU soft CPU emulator or through macOS’s internal kernel
-hypervisor.
+(See the "[split kernels][skern]" failure mode below, however.)
 
-The same problem shouldn't occur on Linux since the two instances share
-a kernel.
-
-Contrariwise, it is expected to fail when run on WSL2, since the Windows
-version of Docker pulls the same trick of running Linux-based containers
-in a separate background VM as the macOS version does.
-
+[skern]: /doc/trunk/walbanger/README.md#split-kernels
 
 
 ## <a id="portability"></a>Portability
@@ -163,7 +153,7 @@ heeded the warnings, this program provides a quick way to demonstrate
 the failure without putting valuable data at risk.
 
 
-### Split Kernels
+### <a id="split-kernels"></a>Split Kernels
 
 One of the less obvious ways we've seen this program fail is to run the
 program as a container on the Windows or macOS version of Docker or
