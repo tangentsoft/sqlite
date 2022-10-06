@@ -119,8 +119,14 @@ This fails on macOS in my testing here, either with SQLite error code 14
 (can’t open the database) or 26 (not a database file).  I believe it’s
 due to the hidden background VM, since it causes all file I/O to go
 through the QEMU soft CPU emulator or through macOS’s internal kernel
-hypervisor. I haven’t yet tested on Linux to see if the problem occurs
-there, too. If not, it would support this hypothesis.
+hypervisor.
+
+The same problem shouldn't occur on Linux since the two instances share
+a kernel.
+
+Contrariwise, it is expected to fail when run on WSL2, since the Windows
+version of Docker pulls the same trick of running Linux-based containers
+in a separate background VM as the macOS version does.
 
 
 
